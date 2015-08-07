@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="jp.line.android.sdk.sample" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name="jp.line.android.sdk.sample.LineTestApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="jp.line.android.sdk.sample.HomeActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
+        <!-- LINE SDK Settings -->
+        <activity
+            android:name="jp.line.android.sdk.activity.LineAuthCompleteActivity"
+            android:configChanges="keyboard|orientation"
+            android:exported="true"
+            android:screenOrientation="sensor" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="line.{{ ENTER YOUR CHANNEL ID }}" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="jp.line.android.sdk.activity.WebLoginActivity"
+            android:configChanges="keyboard|orientation"
+            android:exported="false"
+            android:screenOrientation="sensor" >
+        </activity>
+
+        <meta-data
+                android:name="jp.line.sdk.ChannelId"
+                android:value="{{ ENTER YOUR CHANNEL ID }}" />
+        <meta-data
+            android:name="jp.line.sdk.AuthScheme"
+            android:value="line.{{ ENTER YOUR CHANNEL ID }}" />
+    </application>
+
+</manifest>
