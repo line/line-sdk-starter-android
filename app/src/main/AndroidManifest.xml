@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="line.{{ ENTER YOUR CHANNEL ID }}" />
+                <data android:scheme="line.{{ 1532568432 }}" />
             </intent-filter>
         </activity>
         <activity
@@ -45,10 +45,10 @@
 
         <meta-data
                 android:name="jp.line.sdk.ChannelId"
-                android:value="{{ ENTER YOUR CHANNEL ID }}" />
+                android:value="{{ 1532568432 }}" />
         <meta-data
             android:name="jp.line.sdk.AuthScheme"
-            android:value="line.{{ ENTER YOUR CHANNEL ID }}" />
+            android:value="line.{{ 1532568432 }}" />
     </application>
 
 </manifest>
