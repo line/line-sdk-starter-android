@@ -1,0 +1,131 @@
+<uses-permission android:name="android.permission.INTERNET" />
+<activity android:name="jp.line.android.sdk.activity.LineAuthCompleteActivity"
+          android:configChanges="keyboard|orientation"
+          android:exported="true"
+          android:screenOrientation="sensor">
+    <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="line.12345" />
+    </intent-filter>
+</activity>
+<activity android:name="jp.line.android.sdk.activity.WebLoginActivity"
+          android:exported="false"
+          android:configChanges="keyboard|orientation"
+          android:screenOrientation="sensor">
+</activity>
+<meta-data
+    android:name="jp.line.sdk.ChannelId"
+    android:value="12345" />
+<meta-data
+    android:name="jp.line.sdk.AuthScheme"
+    android:value="line.12345" />
+    import android.app.Application;
+import jp.line.android.sdk.LineSdkContextManager;
+
+public class SampleLineSdkApplication extends Application {
+    public void onCreate() {
+        super.onCreate();
+        ...
+        LineSdkContextManager.initialize(this);
+    }
+    ...
+}
+LineSdkContext sdkContext = LineSdkContextManager.getSdkContext();
+LineAuthManager authManager = sdkContext.getAuthManager();
+Activity activity = ...; // Use "this" when performing in any Activit class
+LineLoginFuture loginFuture = authManager.login(activity);
+loginFuture.addFutureListener(new LineLoginFutureListener() {
+    @Override
+    public void loginComplete(LineLoginFuture future) {
+        switch(future.getProgress()) {
+            case SUCCESS: Login successfully
+                // Do something...
+                break;
+            case CANCELED: // Login canceled by user
+                // Do something...
+                break;
+            default: // Error
+                // Do something...
+                break;
+        }
+    }
+});
+Throwable cause = future.getCause();
+if (cause instanceof LineSdkLoginException) {
+    LineSdkLoginException loginException = (LineSdkLoginException)cause;
+    LineSdkLoginError error = loginException.error;
+    switch(error) {
+        case FAILED_START_LOGIN_ACTIVITY:
+            // Failed launching LINE application or WebLoginActivity (Activity may be null)
+            break;
+        case FAILED_A2A_LOGIN:
+            // Failed LINE login
+            break;
+        case FAILED_WEB_LOGIN:
+            // Failed Web login
+            break;
+        case UNKNOWN:
+            // Un expected error occurred
+            break;
+    }
+} else {
+    // Check other exceptions
+}
+LineAuthManager authManager = ...;
+authManager.addOnAccessTokenChangedListener(new OnAccessTokenChangedListener() {
+    @Override
+    public void onAccessTokenChanged(final AccessToken newAccessToken) {
+        // do something...
+    }
+    LineAuthManager authManager = LineSdkContextManager.getSdkContext();
+authManager.logout();
+LineSdkContext sdkContext = LineSdkContextManager.getSdkContext();
+ApiClient apiClient = sdkContext.getApiClient();
+apiClient.getMyProfile(new ApiRequestFutureListener() {
+    @Override
+    public void requestComplete(ApiRequestFuture future) {
+        switch(future.getStatus()) {
+            case SUCCESS:
+                Profile profile = future.getResponseObject();
+                // Do something...
+                break;
+            default:
+                // Failed to call API
+                break;
+        }
+    }
+});
+Throwable cause = future.getCause();
+if (cause instanceof LineSdkApiException) {
+    LineSdkApiException apiException = (LineSdkApiException)cause;
+    if (apiException.isAccessTokenExpired()) {
+        // The access token was already expired.
+        // Should logout and remove the access token.
+    } else {
+        LineSdkApiError error = apiException.apiError;
+        int httpStatusCode = apiException.httpStatusCode;
+        switch(error) {
+            case NOT_FOUND_ACCESS_TOKEN:
+                // Access token not found.
+                break;
+            case SERVER_ERROR:
+                // The error was returned from a server.
+                LineSdkApiServerError serverError = apiException.serverError;
+                int statusCode = serverError.statusCode;
+                String statusMessage = serverError.statusMessage;
+                // Do something...
+                break;
+            case ILLEGAL_RESPONSE:
+                // A format of the response was unusual.
+                break;
+            case UNKNOWN:
+                // Unexpected error occurred.
+                break;
+        }
+    }
+} else {
+    // Check other exceptions
+}
+});
